@@ -188,17 +188,17 @@ MAIN_PAGE_HTML = """
 @app.route('/')
 def index():
     """Главная страница"""
-    return render_template_string(MAIN_PAGE_HTML)
+    return send_from_directory('.', 'index.html')
 
 @app.route('/app')
 def app_page():
-    """Страница приложения"""
-    return send_from_directory('webapp', 'index.html')
+    """Страница приложения (редирект на /)"""
+    return send_from_directory('.', 'index.html')
 
 @app.route('/app/<path:filename>')
 def app_files(filename):
     """Статические файлы приложения"""
-    return send_from_directory('webapp', filename)
+    return send_from_directory('.', filename)
 
 @app.route('/api/<path:path>')
 def api_proxy(path):
