@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Пути к файлам данных
-MARKERS_FILE = 'markers.json'
+MARKERS_FILE = 'zmarkers.json'
 COMMENTS_FILE = 'comments.json'
 ROUTES_FILE = 'routes.json'
 
@@ -27,29 +27,9 @@ def save_data(data, filename):
 
 @app.route('/api/markers', methods=['GET'])
 def get_markers():
-    """Получить все метки (и удалить старые)"""
+    """Получить все метки"""
     markers = load_data(MARKERS_FILE)
-    now = datetime.now()
-    # Оставляем только метки младше 2 часов
-    fresh_markers = []
-    old_marker_ids = set()
-    for m in markers:
-        try:
-            created = datetime.fromisoformat(m['timestamp'])
-        except Exception:
-            created = now
-        if (now - created).total_seconds() < 2 * 60 * 60:
-            fresh_markers.append(m)
-        else:
-            old_marker_ids.add(m['id'])
-    # Если были старые метки — удаляем их и связанные комментарии
-    if len(fresh_markers) != len(markers):
-        save_data(fresh_markers, MARKERS_FILE)
-        # Удаляем комментарии к старым меткам
-        comments = load_data(COMMENTS_FILE)
-        comments = [c for c in comments if c.get('marker_id') not in old_marker_ids]
-        save_data(comments, COMMENTS_FILE)
-    return jsonify(fresh_markers)
+    return jsonify(markers)
 
 @app.route('/api/markers', methods=['POST'])
 def add_marker():
