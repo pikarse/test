@@ -3,7 +3,7 @@
 Веб-сервер для раздачи статических файлов приложения
 """
 
-from flask import Flask, send_from_directory, render_template_string
+from flask import Flask, render_template_string, send_from_directory
 import os
 import requests
 
@@ -188,12 +188,12 @@ MAIN_PAGE_HTML = """
 @app.route('/')
 def index():
     """Главная страница"""
-    return send_from_directory('.', 'index.html')
+    return render_template_string(MAIN_PAGE_HTML)
 
 @app.route('/app')
 def app_page():
     """Страница приложения (редирект на /)"""
-    return send_from_directory('.', 'index.html')
+    return render_template_string(MAIN_PAGE_HTML)
 
 @app.route('/app/<path:filename>')
 def app_files(filename):
@@ -213,6 +213,10 @@ def api_proxy(path):
 def health_check():
     """Проверка здоровья сервиса"""
     return {'status': 'ok', 'service': 'russia-map-frontend', 'backend_url': BACKEND_URL}
+
+@app.route('/index.html')
+def index_html():
+    return render_template_string(MAIN_PAGE_HTML)
 
 if __name__ == '__main__':
     # Получаем порт из переменной окружения или используем 3000
